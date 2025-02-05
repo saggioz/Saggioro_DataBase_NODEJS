@@ -44,9 +44,9 @@ const createTable = () => {
 const insert = (todo) => {
     const template = `
     INSERT INTO todo (name, completed) VALUES ('$NAME', '$COMPLETED')
-    `;
+       `;
     let sql = template.replace("$NAME", todo.name);
-    sql = sql.replace("$COMPLETED", todo.completed);
+    sql = sql.replace("$COMPLETED", todo.completed ? 1 : 0);
     return executeQuery(sql); 
 }
 
