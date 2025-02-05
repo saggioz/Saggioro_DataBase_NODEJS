@@ -130,6 +130,6 @@ dist
 .pnp.*
 
 
-conf.json
-package-lock.json
-ca.pem
+.conf.json
+.package-lock.json
+.ca.pem
