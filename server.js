@@ -4,12 +4,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const http = require("http");
 
-//libreria mysql2
-const fs = require('fs');
-const mysql = require('mysql2');
-const conf = JSON.parse(fs.readFileSync('conf.json'));
-const connection = mysql.createConnection(conf);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
    extended: true
@@ -18,39 +12,11 @@ app.use(bodyParser.urlencoded({
 const path = require('path');
 app.use("/", express.static(path.join(__dirname, "public")));
 
-let todos = [];
-
-app.post("/todo/add", (req, res) => {
-   const todo = req.body.todo;
-   todo.id = "" + new Date().getTime();
-   todos.push(todo);
-   res.json({result: "Ok"});
-});
-
-app.get("/todo", (req, res) => {
-   res.json({todos: todos});
-});
-
-app.put("/todo/complete", (req, res) => {
-    const todo = req.body;
-    try {
-        todos = todos.map((element) => {
-        if (element.id === todo.id) {
-            element.completed = true;
-        }
-        return element;
-        })
-    } catch (e) {
-       console.log(e);
-    }
-    res.json({result: "Ok"});
-});
-
-
-app.delete("/todo/:id", (req, res) => {
-    todos = todos.filter((element) => element.id !== req.params.id);
-    res.json({result: "Ok"});  
-})
+//libreria mysql2
+const fs = require('fs');
+const mysql = require('mysql2');
+const conf = JSON.parse(fs.readFileSync('conf.json'));
+const connection = mysql.createConnection(conf);
 
 const executeQuery = (sql) => {
     return new Promise((resolve, reject) => {
@@ -95,6 +61,40 @@ createTable().then(() => {
         select().then(console.log);
     });
 });
+
+
+let todos = [];
+
+app.post("/todo/add", (req, res) => {
+   const todo = req.body.todo;
+   todo.id = "" + new Date().getTime();
+   todos.push(todo);
+   res.json({result: "Ok"});
+});
+
+app.get("/todo", (req, res) => {
+   res.json({todos: todos});
+});
+
+app.put("/todo/complete", (req, res) => {
+    const todo = req.body;
+    try {
+        todos = todos.map((element) => {
+        if (element.id === todo.id) {
+            element.completed = true;
+        }
+        return element;
+        })
+    } catch (e) {
+       console.log(e);
+    }
+    res.json({result: "Ok"});
+});
+
+app.delete("/todo/:id", (req, res) => {
+    todos = todos.filter((element) => element.id !== req.params.id);
+    res.json({result: "Ok"});  
+})
 
 const server = http.createServer(app);
 
